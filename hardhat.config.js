@@ -34,10 +34,9 @@ module.exports = {
     defaultNetwork: "hardhat",
     networks: {
         hardhat: {
-            // // If you want to do some forking, uncomment this
-            // forking: {
-            //   url: MAINNET_RPC_URL
-            // }
+            forking: {
+               url: MAINNET_RPC_URL
+            }
         },
         localhost: {
         },
@@ -104,6 +103,9 @@ module.exports = {
         compilers: [
             {
                 version: "0.8.7"
+            },
+            {
+                version: "0.7.4"
             },
             {
                 version: "0.6.6"
