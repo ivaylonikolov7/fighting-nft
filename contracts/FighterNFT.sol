@@ -32,19 +32,19 @@ contract FighterNFT is ERC721, Ownable {
         stats[tokenId][Stats.Grappling] = 9;
         stats[tokenId][Stats.PotentialAbility] = 9;
     }
-    function getFighterStriking(uint id) public view returns(uint){
+    function getStriking(uint id) public view returns(uint){
         return stats[id][Stats.Striking];
     }
-    function getFighterGrappling(uint id) public view returns (uint){
+    function getGrappling(uint id) public view returns (uint){
         return stats[id][Stats.Grappling];
     }
-    function getFighterStamina(uint id) public view returns (uint){
+    function getStamina(uint id) public view returns (uint){
         return stats[id][Stats.Stamina];
     }
-    function getFighterHealth(uint id) public view returns (uint){
+    function getHealth(uint id) public view returns (uint){
         return stats[id][Stats.Health];
     }
-    function getFighterPA(uint id) public view returns (uint){
+    function getPA(uint id) public view returns (uint){
         return stats[id][Stats.PotentialAbility];
     }
     function sendFightOffer(address to) public returns (uint8){

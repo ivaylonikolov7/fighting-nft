@@ -19,8 +19,8 @@ contract TrainerNFT is ERC721, Ownable {
     constructor() ERC721("TrainerNFT", "TRN") {}
 
     function buy(uint trainerId,uint fighterId) public payable{
-        uint8 coachedFighters = coachedFighters[trainerId].length;
-        require(coachedFighters<8, "Coach has too many fighters");
+        uint coachedFightersLength = coachedFighters[trainerId].length;
+        require(coachedFightersLength<8, "Coach has too many fighters");
         coachedFighters[trainerId].push(fighterId);
         lastPaidDates[trainerId][fighterId] = block.timestamp;
     }
