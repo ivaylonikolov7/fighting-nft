@@ -7,15 +7,15 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract FighterNFT is ERC721, Ownable {
     enum Stats{ Striking, Grappling, Stamina, Health, PotentialAbility}
-    uint8[] fightOffer;
-    uint8 fightOfferId;
+    uint8[] public fightOffer;
 
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 
     mapping (uint => mapping(Stats => uint)) stats;
 
-    event FightOfferEmit(address from, address to);
+    event FightOfferEmit(address from, address to, uint nftA, uint nftB);
+    event AcceptFightOffer(uint fightId);
 
     constructor() ERC721("FighterNFT", "FGH") {}
 
@@ -26,11 +26,11 @@ contract FighterNFT is ERC721, Ownable {
         _safeMint(to, tokenId);
     }
     function randomStats(uint tokenId) public{
-        stats[tokenId][Stats.Striking] = 5;
-        stats[tokenId][Stats.Health] = 3;
-        stats[tokenId][Stats.Stamina] = 4;
-        stats[tokenId][Stats.Grappling] = 9;
-        stats[tokenId][Stats.PotentialAbility] = 9;
+        stats[tokenId][Stats.Striking] = random(10);
+        stats[tokenId][Stats.Health] = random(10);
+        stats[tokenId][Stats.Stamina] = random(10);
+        stats[tokenId][Stats.Grappling] = random(10);
+        stats[tokenId][Stats.PotentialAbility] = random(10);
     }
     function getStriking(uint id) public view returns(uint){
         return stats[id][Stats.Striking];
@@ -47,25 +47,22 @@ contract FighterNFT is ERC721, Ownable {
     function getPA(uint id) public view returns (uint){
         return stats[id][Stats.PotentialAbility];
     }
-    function sendFightOffer(address to) public returns (uint8){
-        address from = msg.sender;
-        fightOfferId++;
-        fightOffer[fightOfferId]++;
-
-        emit FightOfferEmit(from,to);
-        return fightOfferId;
+    function sendFightOffer(address to, uint nftA, uint nftB) public{
+        fightOffer.push(1);
+        emit FightOfferEmit(msg.sender,to, nftA, nftB);
     }
-    function acceptFightOffer(address from) public{
-        fightOffer[fightOfferId]++;
-        if(fightOffer[fightOfferId] == 2){
-            //fight(fighterANFT, fighterBNFT, from, msg.sender);
+    function acceptFightOffer(address from, uint fightId, uint nftA, uint nftB) public{
+        fightOffer[fightId]++;
+        if(fightOffer[fightId] == 2){
+            fight(nftA, nftB, from, msg.sender);
+            emit AcceptFightOffer(fightId);
         }
     }
     function fight(uint aNFT, uint bNFT, address fighterA, address fighterB) private{
         uint combinedStatsA = combinedStats(aNFT);
         uint combinedStatsB = combinedStats(bNFT);
 
-        uint winnerNumber = randomNumber();
+        uint winnerNumber = random(combinedStatsA + combinedStatsB);
         if(winnerNumber <= combinedStatsA){
             winner(aNFT);
         }
@@ -78,7 +75,6 @@ contract FighterNFT is ERC721, Ownable {
         return 3;
     }
     function winner(uint id) private{
-        //uint randomStats = randomStats();
         uint potentialAbility = stats[id][Stats.PotentialAbility];
         if(potentialAbility>0){
             stats[id][Stats.Striking]++;
@@ -93,4 +89,7 @@ contract FighterNFT is ERC721, Ownable {
 
         return grappling + striking + stamina;
     }
+    function random(uint a) private view returns (uint) {
+        return uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp))) % a;
+    } 
 }
